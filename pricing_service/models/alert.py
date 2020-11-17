@@ -22,13 +22,7 @@ class Alert(Model):
             "item_id": self.item_id
         }
 
-    def load_item_price(self):
-        return self.item.load_price()
-
-    def notify_if_price_reached(self):
+    def check_and_notify_price(self):
+        self.item.load_price()
         if self.item.price < self.price_limit:
             print(f"Item: {self.item} has reduced it's price under {self.price_limit}. Latest price: {self.item.price}")
-
-    def check_and_notify_price(self):
-        self.load_item_price()
-        self.notify_if_price_reached()
