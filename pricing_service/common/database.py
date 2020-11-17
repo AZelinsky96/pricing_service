@@ -19,6 +19,14 @@ class Database:
     def find_one(cls, collection: str, query: dict)-> dict:
         return cls.DATABASE[collection].find_one(query)
 
+    @classmethod
+    def update(cls, collection: str, query: dict, data: dict)-> None:
+        cls.DATABASE[collection].update(query, data, upsert=True)
+
+    @classmethod
+    def remove(cls, collection: str, query: dict)-> None:
+        cls.DATABASE[collection].remove(query)
+
 
 class DatabaseLocal(Database):
     URI = "mongodb://localhost:27017/pricing"

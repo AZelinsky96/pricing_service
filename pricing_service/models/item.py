@@ -1,14 +1,16 @@
 from uuid import uuid4
 from pricing_service.common.common import get_content
+from pricing_service.models.model import Model
 from pricing_service.common.parsers import PriceParser
 from pricing_service.common.database import DatabaseLocal as Database
 
 
-class Item:
+class Item(Model):
     
     COLLECTION = "items"
 
     def __init__(self, url: str, tag_name: str, query: dict, _id: str=None)-> None:
+        super().__init__()
         self.url = url
         self.tag_name = tag_name
         self.query = query
@@ -22,9 +24,6 @@ class Item:
         content = get_content(self.url)
         self.price = PriceParser(content, "html").get_price(self.tag_name, self.query)
         return self.price
-
-    def save_to_mongo(self) -> None:
-        Database.insert(self.COLLECTION, self.to_json())
     
     def to_json(self)-> dict:
         return {
@@ -33,13 +32,3 @@ class Item:
             "tag_name": self.tag_name,
             "query": self.query
         }
-
-    @classmethod
-    def find_all_items(cls)-> list:
-        items_from_db = Database.find_all(cls.COLLECTION, {})
-        return [cls(**item) for item in items_from_db]
-    
-    @classmethod
-    def get_by_id(cls, _id: str):
-        item_json = Database.find_one(cls.COLLECTION, {"_id": _id})
-        return cls(**item_json)
