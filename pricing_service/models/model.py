@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from pricing_service.common.database import Database
-from typing import TypeVar, Type, List
+from pricing_service.common.database import DatabaseLocal as Database
+from typing import TypeVar, Type, List, Union
 
 
 T = TypeVar("T", bound="Model")
@@ -30,7 +30,7 @@ class Model(metaclass=ABCMeta):
         return [cls(**element) for element in elements_from_db]
 
     @classmethod
-    def find_by_one(cls: Type[T], attribute: str, value: object)-> T:
+    def find_by_one(cls: Type[T], attribute: str, value: Union(str, dict))-> T:
         return cls(**Database.find_one(cls.COLLECTION, {attribute: value}))
 
     @classmethod
